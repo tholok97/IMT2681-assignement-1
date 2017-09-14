@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
 	"strings"
 )
 
@@ -16,7 +17,7 @@ func main() {
 
 	// start listening on port 8080
 	fmt.Println("listening...")
-	err := http.ListenAndServe(":8080", nil)
+	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
 
 	// if error, panic
 	if err != nil {
