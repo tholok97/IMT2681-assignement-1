@@ -9,6 +9,9 @@ import (
 
 func main() {
 
+	// get the port heroku assignened for us
+	port := os.Getenv("PORT")
+
 	// set up default path
 	http.HandleFunc("/", handleNotFound)
 
@@ -16,8 +19,8 @@ func main() {
 	http.HandleFunc("/projectinfo/v1/", handleRequest)
 
 	// start listening on port 8080
-	fmt.Println("listening...")
-	err := http.ListenAndServe(":"+os.Getenv("PORT"), nil)
+	fmt.Println("listening on port " + port + "...")
+	err := http.ListenAndServe(":"+port, nil)
 
 	// if error, panic
 	if err != nil {
