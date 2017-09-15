@@ -3,8 +3,9 @@ package main
 // TODO: handle erors properly
 
 import (
-	// "encoding/json"
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
@@ -59,8 +60,18 @@ func handleRequest(res http.ResponseWriter, req *http.Request) {
 			user := parts[4]
 			repo := parts[5]
 
-			// generate payload based on user, repo and write to response
-			fmt.Fprintln(res, generateResponsePayload(user, repo))
+			// generate payload based on user, repo
+			payload := generateResponsePayload(user, repo)
+
+			// errorcheck payload and write
+			if payload != nil {
+
+				fmt.Fprintln(res, payload)
+			} else {
+				// TODO denne kan være 404 eller 503?
+				res.WriteHeader(http.StatusServiceUnavailable)
+				fmt.Fprintln(res, "503 - Service unavailable")
+			}
 		} else {
 			handleBadRequest(res, req)
 		}
@@ -72,7 +83,34 @@ func handleRequest(res http.ResponseWriter, req *http.Request) {
 	}
 }
 
-// send response to client
-func generateResponsePayload(user, repo string) string {
-	return "{\n\t\"project\": \"github.com/" + user + "/" + repo + "\",\n\t\"" + user + "\": \"apache\"\n}"
+// generate payload by requesting github for the info we need and then basing
+// the payload off the resopnse
+func generateResponsePayload(user, repo string) []byte {
+
+	// make request
+	resp, err := http.Get("https://api.github.com/repos/" + user + "/" + repo)
+	defer resp.Body.Close() // we need to close it when we're done
+
+	// error cheks:
+
+	if err != nil {
+		return nil
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		return nil
+	}
+
+	// get body as bytes, and return
+	b, err := ioutil.ReadAll(resp.Body)
+
+	dec := json.NewDecoder(resp.Body)
+
+	var s string
+	dec.Decode(s)
+	fmt.Println(s)
+
+	return b
+
+	//return "{\n\t\"project\": \"github.com/" + user + "/" + repo + "\",\n\t\"" + user + "\": \"apache\"\n}"
 }
