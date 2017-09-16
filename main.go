@@ -5,15 +5,10 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strings"
 )
-
-type Message struct {
-	Name string
-}
 
 func main() {
 
@@ -42,8 +37,8 @@ func main() {
 
 // handler for when invalid path is used
 func handleBadRequest(res http.ResponseWriter, req *http.Request) {
-	res.WriteHeader(http.StatusBadRequest)
-	fmt.Fprintln(res, "400 - Bad request")
+	status := http.StatusNotFound
+	http.Error(res, http.StatusText(status), status)
 }
 
 // handler for dealing with requests
@@ -64,13 +59,12 @@ func handleRequest(res http.ResponseWriter, req *http.Request) {
 			payload := generateResponsePayload(user, repo)
 
 			// errorcheck payload and write
-			if payload != nil {
-
-				fmt.Fprintln(res, payload)
+			if true {
+				json.NewEncoder(res).Encode(payload)
 			} else {
 				// TODO denne kan være 404 eller 503?
-				res.WriteHeader(http.StatusServiceUnavailable)
-				fmt.Fprintln(res, "503 - Service unavailable")
+				status := http.StatusServiceUnavailable
+				http.Error(res, http.StatusText(status), status)
 			}
 		} else {
 			handleBadRequest(res, req)
@@ -78,39 +72,7 @@ func handleRequest(res http.ResponseWriter, req *http.Request) {
 
 	} else {
 		// not GET. bad
-		res.WriteHeader(http.StatusNotImplemented)
-		fmt.Fprintln(res, "501 - Not implemented")
+		status := http.StatusNotImplemented
+		http.Error(res, http.StatusText(status), status)
 	}
-}
-
-// generate payload by requesting github for the info we need and then basing
-// the payload off the resopnse
-func generateResponsePayload(user, repo string) []byte {
-
-	// make request
-	resp, err := http.Get("https://api.github.com/repos/" + user + "/" + repo)
-	defer resp.Body.Close() // we need to close it when we're done
-
-	// error cheks:
-
-	if err != nil {
-		return nil
-	}
-
-	if resp.StatusCode != http.StatusOK {
-		return nil
-	}
-
-	// get body as bytes, and return
-	b, err := ioutil.ReadAll(resp.Body)
-
-	dec := json.NewDecoder(resp.Body)
-
-	var s string
-	dec.Decode(s)
-	fmt.Println(s)
-
-	return b
-
-	//return "{\n\t\"project\": \"github.com/" + user + "/" + repo + "\",\n\t\"" + user + "\": \"apache\"\n}"
 }
