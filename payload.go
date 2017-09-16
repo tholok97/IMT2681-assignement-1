@@ -93,10 +93,10 @@ func determineLanguages(url string) []string {
 		panic(err)
 	}
 
-	//ret := make([]string, 0)
-	for index, value := range data {
-		fmt.Println(index, ": ", value)
+	ret := make([]string, 0)
+	for index := range data {
+		ret = append(ret, index)
 	}
 
-	return []string{"C++", "Vimscript"}
+	return ret
 }
