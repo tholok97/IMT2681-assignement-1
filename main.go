@@ -15,7 +15,7 @@ func main() {
 	// get the port heroku assignened for us
 	port := os.Getenv("PORT")
 
-	if port == "" { // ....altså hvis heroku ikke har gitt oss en port (DEBUG)
+	if port == "" { // ....if heroku didn't give us a port (DEBUG)
 		port = "8080"
 	}
 
@@ -50,16 +50,18 @@ func handleRequest(res http.ResponseWriter, req *http.Request) {
 		// split URL to fetch information ([3:] are interesting)
 		parts := strings.Split(req.URL.String(), "/")
 
-		// hvis den MINST har user (4) og repo (5). hvis ikke, bad request
+		// if it AT LEAST has user(4) and repo(5), do stuff. if not: bad request
 		if len(parts) > 5 {
 			user := parts[4]
 			repo := parts[5]
 
 			// generate payload based on user, repo
-			payload := generateResponsePayload(user, repo)
+			payload, pErr := generateResponsePayload(user, repo)
 
 			// errorcheck payload and write
-			if true {
+			if pErr == nil {
+				http.Header.Add(res.Header(),
+					"content-type", "application/json")
 				json.NewEncoder(res).Encode(payload)
 			} else {
 				// TODO denne kan være 404 eller 503?
