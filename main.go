@@ -37,7 +37,7 @@ func main() {
 
 // handler for when invalid path is used
 func handleBadRequest(res http.ResponseWriter, req *http.Request) {
-	status := http.StatusNotFound
+	status := http.StatusBadRequest
 	http.Error(res, http.StatusText(status), status)
 }
 
@@ -64,8 +64,16 @@ func handleRequest(res http.ResponseWriter, req *http.Request) {
 					"content-type", "application/json")
 				json.NewEncoder(res).Encode(payload)
 			} else {
-				// TODO denne kan være 404 eller 503?
-				status := http.StatusServiceUnavailable
+
+				// NOTE:	Need to show different status depending on error.
+				//			The following is a BAD solution to the problem, very
+				// TODO		"ad-hoc". Needs improvenemt
+				var status int
+				if pErr.Error() == "unexpected end of JSON input" {
+					status = http.StatusBadRequest
+				} else {
+					status = http.StatusServiceUnavailable
+				}
 				http.Error(res, http.StatusText(status), status)
 			}
 		} else {

@@ -13,6 +13,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -146,15 +147,14 @@ func determineLanguages(url string) ([]string, error) {
 // anything goes wrong
 func getJSON(url string) ([]byte, error) {
 
-	/*
-			// TODO DEBUG
-			if url == "https://api.github.com/repos/tholok97/the-t-files/languages" {
-				return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
-			}
+	// TODO DEBUG
+	if url == "https://api.github.com/repos/tholok97/the-t-files/languages" {
+		return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
+	}
 
-				switch url {
-				case "https://api.github.com/repos/tholok97/the-t-files":
-					return []byte(`{
+	switch url {
+	case "https://api.github.com/repos/tholok97/the-t-files":
+		return []byte(`{
 						"id": 71177175,
 						"name": "the-t-files",
 						"full_name": "tholok97/the-t-files",
@@ -246,14 +246,15 @@ func getJSON(url string) ([]byte, error) {
 						"subscribers_count": 1
 					}
 					`), nil
-				case "https://api.github.com/repos/tholok97/the-t-files/languages":
-					return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
-				case "https://api.github.com/repos/tholok97/the-t-files/contributors":
-					return []byte(`[ { "login": "tholok97", "id": 22896227, "avatar_url": "https://avatars0.githubusercontent.com/u/22896227?v=4", "gravatar_id": "", "url": "https://api.github.com/users/tholok97", "html_url": "https://github.com/tholok97", "followers_url": "https://api.github.com/users/tholok97/followers", "following_url": "https://api.github.com/users/tholok97/following{/other_user}", "gists_url": "https://api.github.com/users/tholok97/gists{/gist_id}", "starred_url": "https://api.github.com/users/tholok97/starred{/owner}{/repo}", "subscriptions_url": "https://api.github.com/users/tholok97/subscriptions", "organizations_url": "https://api.github.com/users/tholok97/orgs", "repos_url": "https://api.github.com/users/tholok97/repos", "events_url": "https://api.github.com/users/tholok97/events{/privacy}", "received_events_url": "https://api.github.com/users/tholok97/received_events", "type": "User", "site_admin": false, "contributions": 120 } ] `), nil
-				}
+	case "https://api.github.com/repos/tholok97/the-t-files/languages":
+		return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
+	case "https://api.github.com/repos/tholok97/the-t-files/contributors":
+		return []byte(`[ { "login": "tholok97", "id": 22896227, "avatar_url": "https://avatars0.githubusercontent.com/u/22896227?v=4", "gravatar_id": "", "url": "https://api.github.com/users/tholok97", "html_url": "https://github.com/tholok97", "followers_url": "https://api.github.com/users/tholok97/followers", "following_url": "https://api.github.com/users/tholok97/following{/other_user}", "gists_url": "https://api.github.com/users/tholok97/gists{/gist_id}", "starred_url": "https://api.github.com/users/tholok97/starred{/owner}{/repo}", "subscriptions_url": "https://api.github.com/users/tholok97/subscriptions", "organizations_url": "https://api.github.com/users/tholok97/orgs", "repos_url": "https://api.github.com/users/tholok97/repos", "events_url": "https://api.github.com/users/tholok97/events{/privacy}", "received_events_url": "https://api.github.com/users/tholok97/received_events", "type": "User", "site_admin": false, "contributions": 120 } ] `), nil
+	default:
+		return []byte(""), nil
+	}
 
-		fmt.Println("requesting github.... (bad?)")
-	*/
+	fmt.Println("requesting github.... (bad?)")
 
 	// (try to) get response from url
 	resp, getErr := http.Get(url)
