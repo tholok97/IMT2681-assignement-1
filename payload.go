@@ -13,18 +13,17 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
 
 // Payload contains the information sent back to the user
 type Payload struct {
-	Project   string   `json:"project"`
-	Owner     string   `json:"owner"`
-	Comitter  string   `json:"comitter"`
-	Commits   int      `json:"commits"`
-	Languages []string `json:"languages"`
+	Project  string   `json:"project"`
+	Owner    string   `json:"owner"`
+	Comitter string   `json:"comitter"`
+	Commits  int      `json:"commits"`
+	Language []string `json:"language"`
 }
 
 // Contains information we wanted from the initial github request
@@ -89,7 +88,7 @@ func generateResponsePayload(user, repo string) (Payload, error) {
 	// (try to) determine langauges. if unable, leave blank
 	langauges, langErr := determineLanguages(ghReposResp.LanguagesURL)
 	if langErr == nil {
-		pload.Languages = langauges
+		pload.Language = langauges
 	}
 
 	return pload, nil
@@ -147,112 +146,114 @@ func determineLanguages(url string) ([]string, error) {
 // anything goes wrong
 func getJSON(url string) ([]byte, error) {
 
-	// TODO DEBUG
-	if url == "https://api.github.com/repos/tholok97/the-t-files/languages" {
-		return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
-	}
+	/*
+			// TODO DEBUG
+			if url == "https://api.github.com/repos/tholok97/the-t-files/languages" {
+				return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
+			}
 
-	switch url {
-	case "https://api.github.com/repos/tholok97/the-t-files":
-		return []byte(`{
-			"id": 71177175,
-			"name": "the-t-files",
-			"full_name": "tholok97/the-t-files",
-			"owner": {
-				"login": "tholok97",
-				"id": 22896227,
-				"avatar_url": "https://avatars0.githubusercontent.com/u/22896227?v=4",
-				"gravatar_id": "",
-				"url": "https://api.github.com/users/tholok97",
-				"html_url": "https://github.com/tholok97",
-				"followers_url": "https://api.github.com/users/tholok97/followers",
-				"following_url": "https://api.github.com/users/tholok97/following{/other_user}",
-				"gists_url": "https://api.github.com/users/tholok97/gists{/gist_id}",
-				"starred_url": "https://api.github.com/users/tholok97/starred{/owner}{/repo}",
-				"subscriptions_url": "https://api.github.com/users/tholok97/subscriptions",
-				"organizations_url": "https://api.github.com/users/tholok97/orgs",
-				"repos_url": "https://api.github.com/users/tholok97/repos",
-				"events_url": "https://api.github.com/users/tholok97/events{/privacy}",
-				"received_events_url": "https://api.github.com/users/tholok97/received_events",
-				"type": "User",
-				"site_admin": false
-			},
-			"private": false,
-			"html_url": "https://github.com/tholok97/the-t-files",
-			"description": "Div. C++ prosjekter",
-			"fork": false,
-			"url": "https://api.github.com/repos/tholok97/the-t-files",
-			"forks_url": "https://api.github.com/repos/tholok97/the-t-files/forks",
-			"keys_url": "https://api.github.com/repos/tholok97/the-t-files/keys{/key_id}",
-			"collaborators_url": "https://api.github.com/repos/tholok97/the-t-files/collaborators{/collaborator}",
-			"teams_url": "https://api.github.com/repos/tholok97/the-t-files/teams",
-			"hooks_url": "https://api.github.com/repos/tholok97/the-t-files/hooks",
-			"issue_events_url": "https://api.github.com/repos/tholok97/the-t-files/issues/events{/number}",
-			"events_url": "https://api.github.com/repos/tholok97/the-t-files/events",
-			"assignees_url": "https://api.github.com/repos/tholok97/the-t-files/assignees{/user}",
-			"branches_url": "https://api.github.com/repos/tholok97/the-t-files/branches{/branch}",
-			"tags_url": "https://api.github.com/repos/tholok97/the-t-files/tags",
-			"blobs_url": "https://api.github.com/repos/tholok97/the-t-files/git/blobs{/sha}",
-			"git_tags_url": "https://api.github.com/repos/tholok97/the-t-files/git/tags{/sha}",
-			"git_refs_url": "https://api.github.com/repos/tholok97/the-t-files/git/refs{/sha}",
-			"trees_url": "https://api.github.com/repos/tholok97/the-t-files/git/trees{/sha}",
-			"statuses_url": "https://api.github.com/repos/tholok97/the-t-files/statuses/{sha}",
-			"languages_url": "https://api.github.com/repos/tholok97/the-t-files/languages",
-			"stargazers_url": "https://api.github.com/repos/tholok97/the-t-files/stargazers",
-			"contributors_url": "https://api.github.com/repos/tholok97/the-t-files/contributors",
-			"subscribers_url": "https://api.github.com/repos/tholok97/the-t-files/subscribers",
-			"subscription_url": "https://api.github.com/repos/tholok97/the-t-files/subscription",
-			"commits_url": "https://api.github.com/repos/tholok97/the-t-files/commits{/sha}",
-			"git_commits_url": "https://api.github.com/repos/tholok97/the-t-files/git/commits{/sha}",
-			"comments_url": "https://api.github.com/repos/tholok97/the-t-files/comments{/number}",
-			"issue_comment_url": "https://api.github.com/repos/tholok97/the-t-files/issues/comments{/number}",
-			"contents_url": "https://api.github.com/repos/tholok97/the-t-files/contents/{+path}",
-			"compare_url": "https://api.github.com/repos/tholok97/the-t-files/compare/{base}...{head}",
-			"merges_url": "https://api.github.com/repos/tholok97/the-t-files/merges",
-			"archive_url": "https://api.github.com/repos/tholok97/the-t-files/{archive_format}{/ref}",
-			"downloads_url": "https://api.github.com/repos/tholok97/the-t-files/downloads",
-			"issues_url": "https://api.github.com/repos/tholok97/the-t-files/issues{/number}",
-			"pulls_url": "https://api.github.com/repos/tholok97/the-t-files/pulls{/number}",
-			"milestones_url": "https://api.github.com/repos/tholok97/the-t-files/milestones{/number}",
-			"notifications_url": "https://api.github.com/repos/tholok97/the-t-files/notifications{?since,all,participating}",
-			"labels_url": "https://api.github.com/repos/tholok97/the-t-files/labels{/name}",
-			"releases_url": "https://api.github.com/repos/tholok97/the-t-files/releases{/id}",
-			"deployments_url": "https://api.github.com/repos/tholok97/the-t-files/deployments",
-			"created_at": "2016-10-17T20:13:35Z",
-			"updated_at": "2016-11-03T16:35:36Z",
-			"pushed_at": "2017-04-24T21:50:48Z",
-			"git_url": "git://github.com/tholok97/the-t-files.git",
-			"ssh_url": "git@github.com:tholok97/the-t-files.git",
-			"clone_url": "https://github.com/tholok97/the-t-files.git",
-			"svn_url": "https://github.com/tholok97/the-t-files",
-			"homepage": "",
-			"size": 3511,
-			"stargazers_count": 0,
-			"watchers_count": 0,
-			"language": "C++",
-			"has_issues": true,
-			"has_projects": true,
-			"has_downloads": true,
-			"has_wiki": true,
-			"has_pages": false,
-			"forks_count": 0,
-			"mirror_url": null,
-			"open_issues_count": 0,
-			"forks": 0,
-			"open_issues": 0,
-			"watchers": 0,
-			"default_branch": "master",
-			"network_count": 0,
-			"subscribers_count": 1
-		}
-		`), nil
-	case "https://api.github.com/repos/tholok97/the-t-files/languages":
-		return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
-	case "https://api.github.com/repos/tholok97/the-t-files/contributors":
-		return []byte(`[ { "login": "tholok97", "id": 22896227, "avatar_url": "https://avatars0.githubusercontent.com/u/22896227?v=4", "gravatar_id": "", "url": "https://api.github.com/users/tholok97", "html_url": "https://github.com/tholok97", "followers_url": "https://api.github.com/users/tholok97/followers", "following_url": "https://api.github.com/users/tholok97/following{/other_user}", "gists_url": "https://api.github.com/users/tholok97/gists{/gist_id}", "starred_url": "https://api.github.com/users/tholok97/starred{/owner}{/repo}", "subscriptions_url": "https://api.github.com/users/tholok97/subscriptions", "organizations_url": "https://api.github.com/users/tholok97/orgs", "repos_url": "https://api.github.com/users/tholok97/repos", "events_url": "https://api.github.com/users/tholok97/events{/privacy}", "received_events_url": "https://api.github.com/users/tholok97/received_events", "type": "User", "site_admin": false, "contributions": 120 } ] `), nil
-	}
+				switch url {
+				case "https://api.github.com/repos/tholok97/the-t-files":
+					return []byte(`{
+						"id": 71177175,
+						"name": "the-t-files",
+						"full_name": "tholok97/the-t-files",
+						"owner": {
+							"login": "tholok97",
+							"id": 22896227,
+							"avatar_url": "https://avatars0.githubusercontent.com/u/22896227?v=4",
+							"gravatar_id": "",
+							"url": "https://api.github.com/users/tholok97",
+							"html_url": "https://github.com/tholok97",
+							"followers_url": "https://api.github.com/users/tholok97/followers",
+							"following_url": "https://api.github.com/users/tholok97/following{/other_user}",
+							"gists_url": "https://api.github.com/users/tholok97/gists{/gist_id}",
+							"starred_url": "https://api.github.com/users/tholok97/starred{/owner}{/repo}",
+							"subscriptions_url": "https://api.github.com/users/tholok97/subscriptions",
+							"organizations_url": "https://api.github.com/users/tholok97/orgs",
+							"repos_url": "https://api.github.com/users/tholok97/repos",
+							"events_url": "https://api.github.com/users/tholok97/events{/privacy}",
+							"received_events_url": "https://api.github.com/users/tholok97/received_events",
+							"type": "User",
+							"site_admin": false
+						},
+						"private": false,
+						"html_url": "https://github.com/tholok97/the-t-files",
+						"description": "Div. C++ prosjekter",
+						"fork": false,
+						"url": "https://api.github.com/repos/tholok97/the-t-files",
+						"forks_url": "https://api.github.com/repos/tholok97/the-t-files/forks",
+						"keys_url": "https://api.github.com/repos/tholok97/the-t-files/keys{/key_id}",
+						"collaborators_url": "https://api.github.com/repos/tholok97/the-t-files/collaborators{/collaborator}",
+						"teams_url": "https://api.github.com/repos/tholok97/the-t-files/teams",
+						"hooks_url": "https://api.github.com/repos/tholok97/the-t-files/hooks",
+						"issue_events_url": "https://api.github.com/repos/tholok97/the-t-files/issues/events{/number}",
+						"events_url": "https://api.github.com/repos/tholok97/the-t-files/events",
+						"assignees_url": "https://api.github.com/repos/tholok97/the-t-files/assignees{/user}",
+						"branches_url": "https://api.github.com/repos/tholok97/the-t-files/branches{/branch}",
+						"tags_url": "https://api.github.com/repos/tholok97/the-t-files/tags",
+						"blobs_url": "https://api.github.com/repos/tholok97/the-t-files/git/blobs{/sha}",
+						"git_tags_url": "https://api.github.com/repos/tholok97/the-t-files/git/tags{/sha}",
+						"git_refs_url": "https://api.github.com/repos/tholok97/the-t-files/git/refs{/sha}",
+						"trees_url": "https://api.github.com/repos/tholok97/the-t-files/git/trees{/sha}",
+						"statuses_url": "https://api.github.com/repos/tholok97/the-t-files/statuses/{sha}",
+						"languages_url": "https://api.github.com/repos/tholok97/the-t-files/languages",
+						"stargazers_url": "https://api.github.com/repos/tholok97/the-t-files/stargazers",
+						"contributors_url": "https://api.github.com/repos/tholok97/the-t-files/contributors",
+						"subscribers_url": "https://api.github.com/repos/tholok97/the-t-files/subscribers",
+						"subscription_url": "https://api.github.com/repos/tholok97/the-t-files/subscription",
+						"commits_url": "https://api.github.com/repos/tholok97/the-t-files/commits{/sha}",
+						"git_commits_url": "https://api.github.com/repos/tholok97/the-t-files/git/commits{/sha}",
+						"comments_url": "https://api.github.com/repos/tholok97/the-t-files/comments{/number}",
+						"issue_comment_url": "https://api.github.com/repos/tholok97/the-t-files/issues/comments{/number}",
+						"contents_url": "https://api.github.com/repos/tholok97/the-t-files/contents/{+path}",
+						"compare_url": "https://api.github.com/repos/tholok97/the-t-files/compare/{base}...{head}",
+						"merges_url": "https://api.github.com/repos/tholok97/the-t-files/merges",
+						"archive_url": "https://api.github.com/repos/tholok97/the-t-files/{archive_format}{/ref}",
+						"downloads_url": "https://api.github.com/repos/tholok97/the-t-files/downloads",
+						"issues_url": "https://api.github.com/repos/tholok97/the-t-files/issues{/number}",
+						"pulls_url": "https://api.github.com/repos/tholok97/the-t-files/pulls{/number}",
+						"milestones_url": "https://api.github.com/repos/tholok97/the-t-files/milestones{/number}",
+						"notifications_url": "https://api.github.com/repos/tholok97/the-t-files/notifications{?since,all,participating}",
+						"labels_url": "https://api.github.com/repos/tholok97/the-t-files/labels{/name}",
+						"releases_url": "https://api.github.com/repos/tholok97/the-t-files/releases{/id}",
+						"deployments_url": "https://api.github.com/repos/tholok97/the-t-files/deployments",
+						"created_at": "2016-10-17T20:13:35Z",
+						"updated_at": "2016-11-03T16:35:36Z",
+						"pushed_at": "2017-04-24T21:50:48Z",
+						"git_url": "git://github.com/tholok97/the-t-files.git",
+						"ssh_url": "git@github.com:tholok97/the-t-files.git",
+						"clone_url": "https://github.com/tholok97/the-t-files.git",
+						"svn_url": "https://github.com/tholok97/the-t-files",
+						"homepage": "",
+						"size": 3511,
+						"stargazers_count": 0,
+						"watchers_count": 0,
+						"language": "C++",
+						"has_issues": true,
+						"has_projects": true,
+						"has_downloads": true,
+						"has_wiki": true,
+						"has_pages": false,
+						"forks_count": 0,
+						"mirror_url": null,
+						"open_issues_count": 0,
+						"forks": 0,
+						"open_issues": 0,
+						"watchers": 0,
+						"default_branch": "master",
+						"network_count": 0,
+						"subscribers_count": 1
+					}
+					`), nil
+				case "https://api.github.com/repos/tholok97/the-t-files/languages":
+					return []byte(`{ "C++": 85890, "Vim script": 15368 }`), nil
+				case "https://api.github.com/repos/tholok97/the-t-files/contributors":
+					return []byte(`[ { "login": "tholok97", "id": 22896227, "avatar_url": "https://avatars0.githubusercontent.com/u/22896227?v=4", "gravatar_id": "", "url": "https://api.github.com/users/tholok97", "html_url": "https://github.com/tholok97", "followers_url": "https://api.github.com/users/tholok97/followers", "following_url": "https://api.github.com/users/tholok97/following{/other_user}", "gists_url": "https://api.github.com/users/tholok97/gists{/gist_id}", "starred_url": "https://api.github.com/users/tholok97/starred{/owner}{/repo}", "subscriptions_url": "https://api.github.com/users/tholok97/subscriptions", "organizations_url": "https://api.github.com/users/tholok97/orgs", "repos_url": "https://api.github.com/users/tholok97/repos", "events_url": "https://api.github.com/users/tholok97/events{/privacy}", "received_events_url": "https://api.github.com/users/tholok97/received_events", "type": "User", "site_admin": false, "contributions": 120 } ] `), nil
+				}
 
-	fmt.Println("requesting github.... (bad?)")
+		fmt.Println("requesting github.... (bad?)")
+	*/
 
 	// (try to) get response from url
 	resp, getErr := http.Get(url)
