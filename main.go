@@ -26,7 +26,7 @@ func main() {
 	http.HandleFunc("/projectinfo/v1/github.com/", handleRequest)
 
 	// start listening on port 8080
-	fmt.Println("listening on port " + port + "...")
+	fmt.Println("Listening on port " + port + "...")
 	err := http.ListenAndServe(":"+port, nil)
 
 	// if error, panic
