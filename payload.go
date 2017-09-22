@@ -1,16 +1,5 @@
 package main
 
-/*
- * TESTS
-	test -v (more detailed)
-	test -cover	 (percentage)
-	test -coverprofile=coverage.out (store coverage in file)
-	teset cover -html=coverage.out (show colorcoded in browser)
- * empty languages, empty contributor list
- * mariusj is using ->>> url . Errorf
- * synmaxcols
-*/
-
 import (
 	"encoding/json"
 	"io/ioutil"
@@ -146,6 +135,8 @@ func determineLanguages(url string) ([]string, error) {
 // anything goes wrong
 func getJSON(url string) ([]byte, error) {
 
+	// switch to return hardcoded results during testing. Copy-and-pasted
+	//	in for simplicity
 	/*
 
 		// TODO DEBUG
