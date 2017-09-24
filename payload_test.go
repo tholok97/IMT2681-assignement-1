@@ -12,7 +12,7 @@ import "testing"
 func TestDetermineTopCommiter(t *testing.T) {
 
 	// test urls:
-	urlValid := "https://api.github.com/repos/tholok97/the-t-files/contributors"
+	urlValid := "https://api.github.com/repos/tholok97/the-t-files/stats/contributors"
 	urlInvaid := "this is not an url! xD"
 	urlMisguided := "https://api.github.com/repos/tholok97/the-t-files/"
 
@@ -20,7 +20,7 @@ func TestDetermineTopCommiter(t *testing.T) {
 	topValid, errValid := determineTopCommiter(urlValid)
 	if errValid != nil {
 		t.Error("Gave error on valid url")
-	} else if topValid.Login != "tholok97" {
+	} else if topValid.Author.Login != "tholok97" {
 		t.Error("Didn't return correct contributor")
 	}
 
@@ -50,12 +50,13 @@ func TestDetermineLanguages(t *testing.T) {
 		t.Error("Gave error on valid url")
 	}
 
-	if len(langsValid) == 0 {
-		t.Error("Gave empty slice on valid url")
+	if len(langsValid) != 2 {
+		t.Error("Gave wrong size slice on valid url")
 	}
 
-	if langsValid[0] != "C++" {
-		t.Error("Didn't have correct langauge as first element (C++)")
+	// (index of languages is not consistent (?))
+	if langsValid[0] != "C++" && langsValid[1] != "C++" {
+		t.Errorf("Didn't have correct langauge")
 	}
 
 	// test invalid url
@@ -76,20 +77,28 @@ func TestTopContributor(t *testing.T) {
 	// make example contributor list
 	contrs := []contributor{
 		{
-			Login:         "not this one!",
-			Contributions: 15,
+			Total: 15,
+			Author: author{
+				Login: "not this one!",
+			},
 		},
 		{
-			Login:         "thomas", // this one should be returned!
-			Contributions: 923,
+			Total: 923,
+			Author: author{
+				Login: "tholok97",
+			},
 		},
 		{
-			Login:         "pkbuer",
-			Contributions: 10,
+			Total: 10,
+			Author: author{
+				Login: "pkbuer",
+			},
 		},
 		{
-			Login:         "",
-			Contributions: 0,
+			Total: 0,
+			Author: author{
+				Login: "",
+			},
 		},
 	}
 
