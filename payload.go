@@ -17,8 +17,7 @@ type Payload struct {
 
 // Contains information we wanted from the initial github request
 type githubReposResponse struct {
-	ContributorsURL string `json:"contributors_url"` // url to contributors
-	LanguagesURL    string `json:"languages_url"`    // url to langauges
+	LanguagesURL string `json:"languages_url"` // url to langauges
 }
 
 // contains sub-object found in contributors reponse
