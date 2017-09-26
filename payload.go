@@ -8,11 +8,11 @@ import (
 
 // Payload contains the information sent back to the user
 type Payload struct {
-	Project  string   `json:"project"`
-	Owner    string   `json:"owner"`
-	Comitter string   `json:"comitter"`
-	Commits  int      `json:"commits"`
-	Language []string `json:"language"`
+	Project   string   `json:"project"`
+	Owner     string   `json:"owner"`
+	Committer string   `json:"comitter"`
+	Commits   int      `json:"commits"`
+	Language  []string `json:"language"`
 }
 
 // Contains information we wanted from the initial github request
@@ -122,7 +122,7 @@ func generateResponsePayload(user, repo string) (Payload, error) {
 	// (try to) determine top commiter. if unable, leave blank
 	top, commitErr := determineTopCommiter("https://api.github.com/repos/" + user + "/" + repo + "/stats/contributors")
 	if commitErr == nil {
-		pload.Comitter = top.Author.Login
+		pload.Committer = top.Author.Login
 		pload.Commits = top.Total
 	}
 
