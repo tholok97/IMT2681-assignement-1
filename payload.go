@@ -11,7 +11,7 @@ type Payload struct {
 	Project   string   `json:"project"`
 	Owner     string   `json:"owner"`
 	Committer string   `json:"committer"`
-	Commits   int      `json:"commits count"`
+	Commits   int      `json:"commits"`
 	Language  []string `json:"language"`
 }
 
