@@ -4,7 +4,9 @@ My solution to assignement 1 in IMT2681 Cloud Technologies.
 
 The app returns information about a given repository in json format.
 
-The app: https://imt2681-assignement-1.herokuapp.com/
+**The app**: https://imt2681-assignement-1.herokuapp.com/
+
+*Complete instructions for the assignement are found in "instructions.md"*
 
 ## Example usage
 
@@ -14,4 +16,6 @@ https://imt2681-assignement-1.herokuapp.com/projectinfo/v1/github.com/tholok97/t
 
 ### Output
 
+```json
 {"project":"the-t-files","owner":"tholok97","comitter":"tholok97","commits":120,"language":["C++","Vim script"]}
+```
